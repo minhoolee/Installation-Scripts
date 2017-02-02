@@ -20,16 +20,16 @@ while true; do
     read -p "Do you wish to install with python support? (y/n [n]) " yn
     case $yn in
         [Yy]* ) 
-			PYTHON=true;
-			while true; do
-				read -p "Which version of python [2.7/3.5] " v
-				case $v in
-					[2.7]* ) PYTHON_VERSION=2.7; break;;
-					[3.5]* ) PYTHON_VERSION=3.5; break;;
-					* ) echo "Please enter the python version.";;
-				esac
-			done
-			break;;
+            PYTHON=true;
+            while true; do
+                read -p "Which version of python [2.7/3.5] " v
+                case $v in
+                    [2.7]* ) PYTHON_VERSION=2.7; break;;
+                    [3.5]* ) PYTHON_VERSION=3.5; break;;
+                    * ) echo "Please enter the python version.";;
+                esac
+            done
+            break;;
         [Nn]* ) break;;
         [A-Za-z]* ) echo "Please answer y or n";;
         * ) break;;
@@ -67,9 +67,9 @@ mkdir build
 cd build
 
 if [[ $EXTRA == true ]]; then
-	# Grab the latest version of the OpenCV extra modules
-	git clone https://github.com/opencv/opencv_contrib.git
-	git --git-dir=opencv_contrib/.git --work-tree=opencv_contrib checkout $TAG
+    # Grab the latest version of the OpenCV extra modules
+    git clone https://github.com/opencv/opencv_contrib.git
+    git --git-dir=opencv_contrib/.git --work-tree=opencv_contrib checkout $TAG
 fi
 
 echo "\n\n*** Installing OpenCV $TAG" | tr -d '\n'
@@ -80,7 +80,7 @@ CMAKE_CMD="cmake -D CMAKE_BUILD_TYPE=RELEASE \
 
 # Configure cmake options for OpenCV based off of user input
 if [[ $PYTHON == true ]]; then 
-	echo " with Python" | tr -d '\n'
+    echo " with Python" | tr -d '\n'
     CMAKE_CMD=$CMAKE_CMD" -D PYTHON_EXECUTABLE=`which python`"
     case $PYTHON_VERSION in
         [2.7]* ) 
@@ -93,11 +93,11 @@ if [[ $PYTHON == true ]]; then
     esac
 fi
 if [[ $EXTRA == true ]]; then
-	echo " and the Extra Modules" | tr -d '\n'
+    echo " and the Extra Modules" | tr -d '\n'
     CMAKE_CMD=$CMAKE_CMD" -D OPENCV_EXTRA_MODULES_PATH=opencv_contrib/modules"
 fi
 if [[ $SAMPLES == true ]]; then
-	echo " and OpenCV samples" | tr -d '\n'
+    echo " and OpenCV samples" | tr -d '\n'
     CMAKE_CMD=$CMAKE_CMD" -D BUILD_EXAMPLES=ON"
 fi
 
