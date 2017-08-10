@@ -1,7 +1,7 @@
-#! /bin/sh
+#! /bin/bash
 # Install script for the latest version of OpenCV with python support and the extra modules added
 # If installing with python, make sure to start the virtualenv before running the script
-# For Debian only; untested
+# For Debian only; tested on Debian Jessie 8.9
 
 # Written by Min Hoo Lee
 # February 1, 2017 (2/1/17)
@@ -9,7 +9,10 @@
 # Exit script on failure
 set -e
 
-echo "\n*** OpenCV Install Script for Ubuntu by Min Hoo Lee ***\n"
+# Allow bash to interpret new line characters for echo
+shopt -s xpg_echo
+
+echo "\n*** OpenCV Install Script for Debian by Min Hoo Lee ***\n"
 
 PYTHON=false
 EXTRA=false
@@ -22,10 +25,10 @@ while true; do
         [Yy]* ) 
             PYTHON=true;
             while true; do
-                read -p "Which version of python [2.7/3.5] " v
+                read -p "Which version of python [2.7/3.4] " v
                 case $v in
                     [2.7]* ) PYTHON_VERSION=2.7; break;;
-                    [3.5]* ) PYTHON_VERSION=3.5; break;;
+                    [3.4]* ) PYTHON_VERSION=3.4; break;;
                     * ) echo "Please enter the python version.";;
                 esac
             done
@@ -58,22 +61,22 @@ done
 
 echo "\n*** Installing dependencies... ***\n"
 # Developer tools
-sudo apt-get install git build-essential cmake pkg-config wget
+sudo apt-get install git build-essential cmake pkg-config wget -yf
 
 # File I/O
-sudo apt-get install libjpeg8-dev libtiff5-dev libjasper-dev libpng12-dev
+sudo apt-get install libjpeg62-turbo-dev libtiff5-dev libjasper-dev libpng12-dev -yf
 
 # Video I/O
-sudo apt-get install libavcodec-dev libavformat-dev libswscale-dev libv4l-dev libxvidcore-dev libx264-dev
+sudo apt-get install libavcodec-dev libavformat-dev libswscale-dev libv4l-dev libxvidcore-dev libx264-dev -yf
 
 # GUI (gtk)
-sudo apt-get install libgtk-3-dev
+sudo apt-get install libgtk-3-dev -yf
 
 # Optimization (BLAS)
-sudo apt-get install libatlas-base-dev gfortran liblapacke-dev
+sudo apt-get install libatlas-base-dev gfortran liblapacke-dev -yf
 
 # Python headers
-sudo apt-get install python2.7-dev python3.5-dev
+sudo apt-get install python2.7-dev python3 -yf
 
 echo "\n\n*** Downloading the latest version of OpenCV... ***\n"
 git clone https://github.com/opencv/opencv.git
@@ -91,7 +94,7 @@ if [[ $EXTRA == true ]]; then
     git --git-dir=opencv_contrib/.git --work-tree=opencv_contrib checkout $TAG
 fi
 
-echo "\n\n*** Installing OpenCV $TAG" | tr -d '\n'
+echo "\n\n*** Installing OpenCV $TAG... ***\n"
 
 CMAKE_CMD="cmake -D CMAKE_BUILD_TYPE=RELEASE \
     -D CMAKE_INSTALL_PREFIX=/usr/local/ \
@@ -105,7 +108,7 @@ if [[ $PYTHON == true ]]; then
         [2.7]* ) 
             CMAKE_CMD=$CMAKE_CMD" -D BUILD_opencv_python2=ON \
                 -D BUILD_opencv_python3=OFF"; break;;
-        [3.5]* ) 
+        [3.4]* ) 
             CMAKE_CMD=$CMAKE_CMD" -D BUILD_opencv_python2=OFF \
                 -D BUILD_opencv_python3=ON"; break;;
         * ) break;;
@@ -134,9 +137,9 @@ sudo ldconfig
 SITE_PACKAGES=`python -c "from distutils.sysconfig import get_python_lib; print(get_python_lib())"`
 
 if [[ $PYTHON_VERSION == "2.7" ]]; then
-    ln -s /usr/local/lib/python2.7/site-packages/cv2.so  $SITE_PACKAGES/cv2.so
-elif [[ $PYTHON_VERSION == "3.5" ]]; then
-    ln -s /usr/local/lib/python3.5/site-packages/cv2.so  $SITE_PACKAGES/cv2.so
+    sudo ln -s /usr/local/lib/python2.7/site-packages/cv2.so  $SITE_PACKAGES/cv2.so
+elif [[ $PYTHON_VERSION == "3.4" ]]; then
+    sudo ln -s /usr/local/lib/python3.4/site-packages/cv2.so  $SITE_PACKAGES/cv2.so
 fi
 
 echo "\n\n*** Installation was successful! ***\n"

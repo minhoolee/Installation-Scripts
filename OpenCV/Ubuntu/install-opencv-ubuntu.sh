@@ -1,13 +1,16 @@
-#! /bin/sh
+#! /bin/bash
 # Install script for the latest version of OpenCV with python support and the extra modules added
 # If installing with python, make sure to start the virtualenv before running the script
-# For Ubuntu only; tested on Ubuntu 16.04 LTS, x64
+# For Ubuntu only; tested on Ubuntu 16.04 LTS
 
 # Written by Min Hoo Lee
 # February 1, 2017 (2/1/17)
 
 # Exit script on failure
 set -e
+
+# Allow bash to interpret new line characters for echo
+shopt -s xpg_echo
 
 echo "\n*** OpenCV Install Script for Ubuntu by Min Hoo Lee ***\n"
 
@@ -99,7 +102,7 @@ if [[ $EXTRA == true ]]; then
     git --git-dir=opencv_contrib/.git --work-tree=opencv_contrib checkout $TAG
 fi
 
-echo "\n\n*** Installing OpenCV $TAG" | tr -d '\n'
+echo "\n\n*** Installing OpenCV $TAG... ***\n"
 
 CMAKE_CMD="cmake -D CMAKE_BUILD_TYPE=RELEASE \
     -D CMAKE_INSTALL_PREFIX=/usr/local/ \
@@ -142,9 +145,9 @@ sudo ldconfig
 SITE_PACKAGES=`python -c "from distutils.sysconfig import get_python_lib; print(get_python_lib())"`
 
 if [[ $PYTHON_VERSION == "2.7" ]]; then
-    ln -s /usr/local/lib/python2.7/site-packages/cv2.so  $SITE_PACKAGES/cv2.so
+    sudo ln -s /usr/local/lib/python2.7/site-packages/cv2.so  $SITE_PACKAGES/cv2.so
 elif [[ $PYTHON_VERSION == "3.5" ]]; then
-    ln -s /usr/local/lib/python3.5/site-packages/cv2.so  $SITE_PACKAGES/cv2.so
+    sudo ln -s /usr/local/lib/python3.5/site-packages/cv2.so  $SITE_PACKAGES/cv2.so
 fi
 
 echo "\n\n*** Installation was successful! ***\n"
