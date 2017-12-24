@@ -60,6 +60,8 @@ while true; do
 done
 
 echo "\n*** Installing dependencies... ***\n"
+sudo apt-get -y update
+
 # Developer tools
 sudo apt-get install git build-essential cmake pkg-config wget -yf
 
