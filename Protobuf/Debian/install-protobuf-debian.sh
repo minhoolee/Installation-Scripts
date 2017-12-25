@@ -63,7 +63,7 @@ TAG=""
 # Acquire user input
 while true; do
     read -p "Which version of protobuf do you wish to install? \
-      (e.g. \"2.5.0\", \"3.3.0\") " TAG
+      (e.g. \"2.5.0\", \"3.3.0\"): " TAG
     if [[ `git ls-remote https://github.com/google/protobuf \
       refs/tags/v$TAG` ]]; then
        break
@@ -78,15 +78,17 @@ git checkout "v$TAG"
 echo "\n\n*** Installing Protobuf $TAG... ***\n"
 
 # Protobof versions before 3.0.0 have broken links
-S="curl http://googletest.googlecode.com/files/gtest-1.5.0.tar.bz2 | tar jx"
+# Extract version number and replace the googletest link
+V=`grep googletest autogen.sh | grep -o '[0-9].[0-9].[0-9]'`
+S="curl http://googletest.googlecode.com/files/gtest-$V.tar.bz2 | tar jx"
 R="curl -L \
-https://github.com/google/googletest/archive/release-1.5.0.tar.gz | tar xz"
+https://github.com/google/googletest/archive/release-$V.tar.gz | tar xz"
 if [[ `vercomp $TAG 3.0.0` == "<" ]]; then
     sed -i'' -e "s@$S@$R@g" autogen.sh
-    sed -i'' -e "s@gtest-1.5.0@googletest-release-1.5.0@g" autogen.sh
-    ./autogen.sh
+    sed -i'' -e "s@gtest-$V@googletest-release-$V@g" autogen.sh
 fi
 
+./autogen.sh
 ./configure
 make -j$(nproc)
 make check
